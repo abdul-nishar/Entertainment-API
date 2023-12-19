@@ -1,0 +1,38 @@
+[
+  {
+    "_id": "657b1f429c86e856cf07effa",
+    "name": "Jonas Schmedtmann",
+    "email": "admin@natours.io",
+    "role": "admin",
+    "active": true,
+    "photo": "user-1.jpg",
+    "password": "$2a$12$Q0grHjH9PXc6SxivC8m12.2mZJ9BbKcgFpwSG4Y1ZEII8HJVzWeyS"
+  },
+  {
+    "_id": "657b1f789c86e856cf07effb",
+    "name": "Lourdes Browning",
+    "email": "loulou@example.com",
+    "role": "user",
+    "active": true,
+    "photo": "user-2.jpg",
+    "password": "$2a$12$hP1h2pnNp7wgyZNRwPsOTeZuNzWBv7vHmsR3DT/OaPSUBQT.y0S.."
+  },
+  {
+    "_id": "657b1f909c86e856cf07effc",
+    "name": "Sophie Louise Hart",
+    "email": "sophie@example.com",
+    "role": "user",
+    "active": true,
+    "photo": "user-3.jpg",
+    "password": "$2a$12$9nFqToiTmjgfFVJiQvjmreLt4k8X4gGYCETGapSZOb2hHa55t0dDq"
+  },
+  {
+    "_id": "657b1fa49c86e856cf07effd",
+    "name": "Ayla Cornell",
+    "email": "ayls@example.com",
+    "role": "user",
+    "active": true,
+    "photo": "user-4.jpg",
+    "password": "$2a$12$tm33.M/4pfEbZF64WbFuHuVFv85v4qEhi.ik8njbud7yaoqCZpjiy"
+  }
+]

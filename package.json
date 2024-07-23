@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Personal Watchlist for movies/tv-series/books/anime...",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js",
     "start:dev": "nodemon server.js",

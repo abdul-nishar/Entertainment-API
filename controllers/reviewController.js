@@ -1,12 +1,32 @@
-const factory = require('./handlerFactory');
-const Review = require('../models/reviewModel');
+import * as factory from './handlerFactory.js';
+import Review from '../models/reviewModel.js';
 
-exports.getAllReviews = factory.getAll(Review);
+/**
+ * Retrieves all reviews using the factory method.
+ * @type {Function}
+ */
+export const getAllReviews = factory.getAll(Review);
 
-exports.createReview = factory.createOne(Review);
+/**
+ * Creates a new review using the factory method.
+ * @type {Function}
+ */
+export const createReview = factory.createOne(Review);
 
-exports.getReview = factory.getOne(Review);
+/**
+ * Retrieves a single review by ID using the factory method.
+ * @type {Function}
+ */
+export const getReview = factory.getOne(Review);
 
-exports.updateReview = factory.updateOne(Review);
+/**
+ * Updates an existing review by ID using the factory method.
+ * @type {Function}
+ */
+export const updateReview = factory.updateOne(Review);
 
-exports.deleteReview = factory.deleteOne(Review);
+/**
+ * Deletes a review by ID using the factory method.
+ * @type {Function}
+ */
+export const deleteReview = factory.deleteOne(Review);

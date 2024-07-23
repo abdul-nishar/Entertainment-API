@@ -1,8 +1,14 @@
-const User = require('../models/userModel');
-const factory = require('./handlerFactory');
-const AppError = require('../utils/appError');
-const catchAsync = require('../utils/catchAsync');
+import User from '../models/userModel.js';
+import * as factory from './handlerFactory.js';
+import AppError from '../utils/appError.js';
+import catchAsync from '../utils/catchAsync.js';
 
+/**
+ * Filters an object to include only allowed fields.
+ * @param {Object} obj - The object to be filtered.
+ * @param {...string} allowedFields - The fields to include in the filtered object.
+ * @returns {Object} - The filtered object with only allowed fields.
+ */
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
@@ -11,17 +17,25 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.updateMe = catchAsync(async (req, res, next) => {
-  if (req.body.password || req.body.passwordConfirm)
+/**
+ * Updates the currently logged-in user's profile with allowed fields.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ * @throws {AppError} If the request body contains password fields.
+ */
+export const updateMe = catchAsync(async (req, res, next) => {
+  if (req.body.password || req.body.passwordConfirm) {
     return next(
       new AppError(
         'This route is not for password updates. Please use /updatePassword',
         401
       )
     );
+  }
 
   const filterBody = filterObj(req.body, 'name', 'email');
-  const updatedUser = User.findByIdAndUpdate(req.user.id, filterBody, {
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, filterBody, {
     new: true,
     runValidators: true,
   });
@@ -34,7 +48,13 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteMe = catchAsync(async (req, res, next) => {
+/**
+ * Marks the currently logged-in user as inactive (soft delete).
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ */
+export const deleteMe = catchAsync(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
   res.status(204).json({
     status: 'success',
@@ -42,12 +62,32 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getAllUsers = factory.getAll(User);
+/**
+ * Retrieves all users using the factory method.
+ * @type {Function}
+ */
+export const getAllUsers = factory.getAll(User);
 
-exports.getUser = factory.getOne(User);
+/**
+ * Retrieves a single user by ID using the factory method.
+ * @type {Function}
+ */
+export const getUser = factory.getOne(User);
 
-exports.createUser = factory.createOne(User);
+/**
+ * Creates a new user using the factory method.
+ * @type {Function}
+ */
+export const createUser = factory.createOne(User);
 
-exports.updateUser = factory.updateOne(User);
+/**
+ * Updates an existing user by ID using the factory method.
+ * @type {Function}
+ */
+export const updateUser = factory.updateOne(User);
 
-exports.deleteUser = factory.deleteOne(User);
+/**
+ * Deletes a user by ID using the factory method.
+ * @type {Function}
+ */
+export const deleteUser = factory.deleteOne(User);

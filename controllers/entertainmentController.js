@@ -1,12 +1,32 @@
-const Entertainment = require('../models/entertainmentModel');
-const factory = require('./handlerFactory');
+import Entertainment from '../models/entertainmentModel.js';
+import * as factory from './handlerFactory.js';
 
-exports.getAllEntertainment = factory.getAll(Entertainment);
+/**
+ * Retrieves all entertainment records.
+ * @type {Function}
+ */
+export const getAllEntertainment = factory.getAll(Entertainment);
 
-exports.createEntertainment = factory.createOne(Entertainment);
+/**
+ * Creates a new entertainment record.
+ * @type {Function}
+ */
+export const createEntertainment = factory.createOne(Entertainment);
 
-exports.getEntertainment = factory.getOne(Entertainment, { path: 'reviews' });
+/**
+ * Retrieves a single entertainment record by ID, including related reviews.
+ * @type {Function}
+ */
+export const getEntertainment = factory.getOne(Entertainment, { path: 'reviews' });
 
-exports.deleteEntertainment = factory.deleteOne(Entertainment);
+/**
+ * Deletes a single entertainment record by ID.
+ * @type {Function}
+ */
+export const deleteEntertainment = factory.deleteOne(Entertainment);
 
-exports.updateEntertainment = factory.updateOne(Entertainment);
+/**
+ * Updates a single entertainment record by ID.
+ * @type {Function}
+ */
+export const updateEntertainment = factory.updateOne(Entertainment);

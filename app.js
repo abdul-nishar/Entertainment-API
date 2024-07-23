@@ -1,50 +1,56 @@
-const express = require('express');
-const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
-const helmet = require('helmet');
-const mongoSanitize = require('express-mongo-sanitize');
-const hpp = require('hpp');
+/**
+ * @fileoverview Main application file for setting up and configuring the Express app.
+ * This file includes middleware setup, route handling, and global error handling.
+ */
 
-const GlobalErrHandler = require('./controllers/errorController');
-const AppError = require('./utils/appError');
-// const cookieParser = require('cookie-parser');
+import express from 'express';
+import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
+import hpp from 'hpp';
+
+import GlobalErrHandler from './controllers/errorController.js';
+import AppError from './utils/appError.js';
+// import cookieParser from 'cookie-parser';
+
 
 // Routers
-const viewRouter = require('./routes/viewRoutes');
-const entertainmentRouter = require('./routes/entertainmentRoutes');
-const userRouter = require('./routes/userRoutes');
-const reviewRouter = require('./routes/reviewRoutes');
-const watchlistRouter = require('./routes/watchlistRoutes');
+// import viewRouter from './routes/viewRoutes.js';
+import entertainmentRouter from './routes/entertainmentRoutes.js';
+import userRouter from './routes/userRoutes.js';
+import reviewRouter from './routes/reviewRoutes.js';
+import watchlistRouter from './routes/watchlistRoutes.js';
 
 const app = express();
 
-// Global Middlware
+/**
+ * Middleware setup
+ */
 
 // Sets security HTTP headers
 app.use(helmet());
 
-// This middleware is responsible for logging HTTP requests and errors
+// Logging middleware for development environment
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Limit requests from same API
+// Rate limiter middleware to prevent excessive requests from the same IP
 const limiter = rateLimit({
   max: 100,
-  windowMs: 60 * 60 * 1000,
+  windowMs: 60 * 60 * 1000, // 1 hour
   message: 'Too many requests from this IP, please try again in an hour!',
 });
-
 app.use('/api', limiter);
 
-// This middleware is responsible for converting incoming JSON string into JSON objects
-// Body parser, reading data from body to req.body
+// Body parser middleware to handle JSON payloads
 app.use(express.json({ limit: '10kb' }));
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
 
-// Http Parameter Pollution
+// Prevent HTTP Parameter Pollution
 app.use(
   hpp({
     whitelist: [
@@ -59,19 +65,23 @@ app.use(
   })
 );
 
-// Route Handlers
-app.use('/', viewRouter);
+/**
+ * Route handlers
+ */
+// app.use('/', viewRouter);
 app.use('/api/v1/entertainment', entertainmentRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/watchlist', watchlistRouter);
 
-// Handling unhandled routes
+// Handle unhandled routes
 app.all('*', (req, res, next) => {
   next(new AppError(`Cannot find ${req.originalUrl} on this server.`, 404));
 });
 
-// Global Error Handling Middleware
+/**
+ * Global error handling middleware
+ */
 app.use(GlobalErrHandler);
 
-module.exports = app;
+export default app;

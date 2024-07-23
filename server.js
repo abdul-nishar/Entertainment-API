@@ -1,37 +1,58 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+/**
+ * @module server
+ */
 
-// Safety net for uncaught exceptions
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+/**
+ * Handle uncaught exceptions globally.
+ * Logs the error and shuts down the process.
+ */
 process.on('uncaughtException', (err) => {
-  console.log(err.name, err.message);
-  console.log('UNHANDLED EXCEPTION! 🔴 Shutting down...');
+  console.error(err.name, err.message);
+  console.error('UNHANDLED EXCEPTION! 🔴 Shutting down...');
   process.exit(1);
 });
 
+// Load environment variables from the config file
 dotenv.config({ path: './config.env' });
 
-const DB = process.env.DATABASE.replace(
-  '<PASSWORD>',
-  process.env.DATABASE_PASSWORD
-);
+/**
+ * Replace placeholder with the actual database password and connect to MongoDB.
+ * Exits the process if there's a connection error.
+ */
+const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
 
-mongoose.connect(DB).then(() => {
+mongoose.connect(DB, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => {
   console.log('DB connection established...');
+}).catch(err => {
+  console.error('DB connection error:', err.message);
+  process.exit(1);
 });
 
-const app = require('./app');
+import app from './app.js';
 
-const port = 3000 || process.env.PORT;
+/**
+ * Set the port for the server, default to 3000 if not specified.
+ * Starts the server and logs the port it is listening on.
+ */
+const port = process.env.PORT || 3000;
 
 const server = app.listen(port, () => {
   console.log(`App listening on port: ${port}`);
 });
 
-// Safety net for unhandled rejected promises
+/**
+ * Handle unhandled promise rejections globally.
+ * Logs the error and shuts down the server gracefully.
+ */
 process.on('unhandledRejection', (err) => {
-  console.log(err.name, err.message);
-  console.log('UNHANDLED PROMISE REJECTION! 🔴 Shutting down...');
-  // server.close waits for the pending requests to complete before exiting the application
+  console.error(err.name, err.message);
+  console.error('UNHANDLED PROMISE REJECTION! 🔴 Shutting down...');
   server.close(() => {
     process.exit(1);
   });

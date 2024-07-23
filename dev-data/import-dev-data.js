@@ -1,29 +1,35 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const User = require('../models/userModel');
-const Entertainment = require('../models/entertainmentModel');
-const Review = require('../models/reviewModel');
-const fs = require('fs');
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import fs from 'fs';
+import User from '../models/userModel.js';
+import Entertainment from '../models/entertainmentModel.js';
+import Review from '../models/reviewModel.js';
 
 dotenv.config({ path: './config.env' });
 
+// Database connection
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
   process.env.DATABASE_PASSWORD
 );
 
-mongoose.connect(DB).then(() => {
-  console.log('Database connection established...');
-});
+mongoose.connect(DB, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log('Database connection established...'))
+  .catch(err => console.error('Database connection error:', err));
 
+// Load data from JSON files
 const users = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, 'utf-8'));
-const entertainments = JSON.parse(
-  fs.readFileSync(`${__dirname}/entertainment.json`, 'utf-8')
-);
-const reviews = JSON.parse(
-  fs.readFileSync(`${__dirname}/reviews.json`, 'utf-8')
-);
+const entertainments = JSON.parse(fs.readFileSync(`${__dirname}/entertainment.json`, 'utf-8'));
+const reviews = JSON.parse(fs.readFileSync(`${__dirname}/reviews.json`, 'utf-8'));
 
+/**
+ * Import data into the database.
+ * @async
+ * @function
+ */
 const importData = async () => {
   try {
     await User.create(users, { validateBeforeSave: false });
@@ -31,10 +37,15 @@ const importData = async () => {
     await Review.create(reviews);
     console.log('Data imported successfully!!');
   } catch (error) {
-    console.log(error);
+    console.error('Data import error:', error);
   }
 };
 
+/**
+ * Delete all data from the database.
+ * @async
+ * @function
+ */
 const deleteData = async () => {
   try {
     await User.deleteMany();
@@ -42,12 +53,13 @@ const deleteData = async () => {
     await Review.deleteMany();
     console.log('Data deleted successfully!!');
   } catch (error) {
-    console.log(error);
+    console.error('Data deletion error:', error);
   }
 };
 
-if (process.argv[2] == '--import') {
+// Command line argument processing
+if (process.argv[2] === '--import') {
   importData();
-} else if (process.argv[2] == '--delete') {
+} else if (process.argv[2] === '--delete') {
   deleteData();
 }

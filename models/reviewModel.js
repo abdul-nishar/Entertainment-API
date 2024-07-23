@@ -1,4 +1,14 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+
+/**
+ * Schema for storing reviews of entertainment items.
+ * @typedef {Object} Review
+ * @property {mongoose.Schema.Types.ObjectId} entertainment - The ID of the entertainment item being reviewed.
+ * @property {mongoose.Schema.Types.ObjectId} user - The ID of the user who wrote the review.
+ * @property {string} review - The text content of the review.
+ * @property {number} rating - The rating given in the review, between 1 and 5.
+ * @property {Date} createdAt - The date when the review was created.
+ */
 
 const reviewSchema = new mongoose.Schema({
   entertainment: {
@@ -23,12 +33,13 @@ const reviewSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
 });
 
-reviewSchema.index({ entertainment: -1, user: -1 }, { unique: true });
+// Create a unique index for combinations of entertainment and user to prevent duplicate reviews
+reviewSchema.index({ entertainment: 1, user: 1 }, { unique: true });
 
 const Review = mongoose.model('Review', reviewSchema);
 
-module.exports = Review;
+export default Review;

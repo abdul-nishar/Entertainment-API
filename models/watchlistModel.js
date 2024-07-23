@@ -1,6 +1,14 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const watchlistSchema = mongoose.Schema({
+/**
+ * Schema for storing user watchlists.
+ * @typedef {Object} Watchlist
+ * @property {mongoose.Schema.Types.ObjectId} entertainment - The ID of the entertainment item added to the watchlist.
+ * @property {mongoose.Schema.Types.ObjectId} user - The ID of the user who added the entertainment to the watchlist.
+ * @property {Date} createdAt - The date when the item was added to the watchlist.
+ */
+
+const watchlistSchema = new mongoose.Schema({
   entertainment: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Entertainment',
@@ -11,14 +19,15 @@ const watchlistSchema = mongoose.Schema({
     ref: 'User',
     required: [true, 'User must be selected for watchlist'],
   },
-  createdAt: {
+  addedAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
 });
 
-watchlistSchema.index({ user: 1, entertainment: 1 });
+// Create a unique index for combinations of user and entertainment
+watchlistSchema.index({ user: 1, entertainment: 1 }, { unique: true });
 
 const Watchlist = mongoose.model('Watchlist', watchlistSchema);
 
-module.exports = Watchlist;
+export default Watchlist;
